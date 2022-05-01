@@ -43,7 +43,7 @@ func init() {
 func hideConfigs(_ *cobra.Command, args []string) error {
 	switch args[0] {
 	case "vsc":
-		return (&hiders.VSCodeHider{}).Hide()
+		return hiders.NewVSCodeHider().Hide()
 	default:
 		return fmt.Errorf("unsupported editor: %s", args[0])
 	}
