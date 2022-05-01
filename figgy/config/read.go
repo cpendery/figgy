@@ -1,8 +1,11 @@
 package config
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 
+	"github.com/cpendery/figgy/figgy/config/cfg"
 	yaml "gopkg.in/yaml.v3"
 )
 
@@ -32,5 +35,19 @@ func GetAllFiggiedConfigs(path string) (*[]string, error) {
 		if figgiedConfig, exists := data[".figgy_file"]; exists {
 			figgiedConfigs = append(figgiedConfigs, figgiedConfig.(string))
 		}
+	}
+}
+
+func ReadFiggyConfig(path string) (ParsedConfig, error) {
+	return nil, nil
+}
+
+func ReadConfig(filename string) (ParsedConfig, error) {
+	extension := filepath.Ext(filename)
+	switch extension {
+	case ".cfg":
+		return cfg.Load(filename)
+	default:
+		return nil, fmt.Errorf("unsupported file extension: %s", extension)
 	}
 }
