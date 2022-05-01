@@ -1,3 +1,4 @@
 .vscode
 figgy.exe
 *.txt
+coverage.out
