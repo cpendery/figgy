@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,10 +23,20 @@ jobs:
         run: go build -o fig
 
       - name: Test
-        run: go test -v -coverprofile=coverage.out -covermode=atomic ./...
+        run: sudo go test -v -coverprofile=coverage.out -covermode=atomic ./...
 
       - name: Codecov
         uses: codecov/codecov-action@v2
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
 
       - name: Lint
         uses: golangci/golangci-lint-action@v3
