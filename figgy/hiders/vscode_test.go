@@ -52,7 +52,7 @@ func TestHide_FailsWrite(t *testing.T) {
 	hider := fixtureGetHider()
 	hider.settingsPath = "../../testdataSink/fake.txt"
 	os.Remove(hider.settingsPath)
-	os.MkdirAll("../../testdataSink/fake.txt", hider.fileMode)    //nolint:errcheck
+	os.MkdirAll("../../testdataSink", hider.fileMode)             //nolint:errcheck
 	os.WriteFile(hider.settingsPath, []byte("a"), hider.fileMode) //nolint:errcheck
 
 	//WHEN
@@ -183,6 +183,7 @@ func TestWriteVSCodeSettings(t *testing.T) {
 	hider := fixtureGetHider()
 	hider.settingsPath = "../../testdataSink/fakeFile.txt"
 	files := []string{"../../testdata/.fig.yaml"}
+	os.MkdirAll("../../testdataSink", hider.fileMode) //nolint:errcheck
 	os.Remove(hider.settingsPath)
 
 	//WHEN
