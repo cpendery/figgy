@@ -2,6 +2,7 @@ package hiders
 
 import (
 	"encoding/json"
+	"io"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -10,14 +11,46 @@ import (
 	"github.com/cpendery/figgy/figgy/config"
 )
 
-const vscodeFolderPath string = "./.vscode"
-const vscodeSettingsFile string = "/settings.json"
-const vscodeSettingsPath string = vscodeFolderPath + vscodeSettingsFile
-const vscodeExcludeFileSetting string = "files.exclude"
-const vscodeSettingFileMode fs.FileMode = 444
+type VSCodeHider struct {
+	folderPath         string
+	settingsFile       string
+	settingsPath       string
+	excludeFileSetting string
+	fileMode           fs.FileMode
+	configName         string
 
-type VSCodeHider struct{}
+	funcWalk     funcWalk
+	funcMkdir    funcMkdir
+	funcOsCreate funcOsCreate
+	funcReadAll  funcReadAll
+	funcOpen     funcOpen
+}
 
+type funcWalk func(string, filepath.WalkFunc) error
+type funcMkdir func(string, fs.FileMode) error
+type funcOsCreate func(string) (*os.File, error)
+type funcReadAll func(io.Reader) ([]byte, error)
+type funcOpen func(name string) (*os.File, error)
+
+func NewVSCodeHider() Hider {
+	return &VSCodeHider{
+		folderPath:         "./.vscode",
+		settingsFile:       "/settings.json",
+		settingsPath:       "./.vscode/settings.json",
+		excludeFileSetting: "files.exclude",
+		fileMode:           444,
+
+		configName:   config.FiggyConfigName,
+		funcWalk:     filepath.Walk,
+		funcMkdir:    os.MkdirAll,
+		funcOsCreate: os.Create,
+		funcReadAll:  ioutil.ReadAll,
+		funcOpen:     os.Open,
+	}
+}
+
+//Updates a .vscode settings file to hide all files found in
+//any figgy files at any depth from the current directory
 func (v *VSCodeHider) Hide() error {
 	figgyConfigs, err := v.getFiggyConfigs()
 	if err != nil {
@@ -28,11 +61,11 @@ func (v *VSCodeHider) Hide() error {
 
 func (v *VSCodeHider) getFiggyConfigs() (*[]string, error) {
 	figgyConfigs := []string{}
-	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+	err := v.funcWalk(".", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if !info.IsDir() && info.Name() == config.FiggyConfigName {
+		if !info.IsDir() && info.Name() == v.configName {
 			figgyConfigs = append(figgyConfigs, path)
 		}
 		return nil
@@ -44,19 +77,19 @@ func (v *VSCodeHider) getFiggyConfigs() (*[]string, error) {
 }
 
 func (v *VSCodeHider) readVSCodeSettings() (*map[string]interface{}, error) {
-	err := os.MkdirAll(vscodeFolderPath, vscodeSettingFileMode)
+	err := v.funcMkdir(v.folderPath, v.fileMode)
 	if err != nil {
 		return nil, err
 	}
 	settingsJson := make(map[string]interface{})
-	file, err := os.Open(vscodeSettingsPath)
+	file, err := v.funcOpen(v.settingsPath)
 	if err != nil {
-		_, err := os.Create(vscodeSettingsPath)
+		_, err := v.funcOsCreate(v.settingsPath)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		data, err := ioutil.ReadAll(file)
+		data, err := v.funcReadAll(file)
 		if err != nil {
 			return nil, err
 		}
@@ -93,18 +126,15 @@ func (v *VSCodeHider) writeVSCodeSettings(figgyConfigs *[]string) error {
 		return err
 	}
 
-	excludedFiles, exists := (*settingsJson)[vscodeExcludeFileSetting]
+	excludedFiles, exists := (*settingsJson)[v.excludeFileSetting]
 	if !exists {
 		excludedFiles = make(map[string]interface{})
-		(*settingsJson)[vscodeExcludeFileSetting] = excludedFiles
+		(*settingsJson)[v.excludeFileSetting] = excludedFiles
 	}
 	for _, fileToHide := range *filesToHide {
 		excludedFiles.(map[string]interface{})[fileToHide] = true
 	}
 
-	bytes, err := json.MarshalIndent(settingsJson, "", "    ")
-	if err != nil {
-		return err
-	}
-	return ioutil.WriteFile(vscodeSettingsPath, bytes, vscodeSettingFileMode)
+	bytes, _ := json.MarshalIndent(settingsJson, "", "    ")
+	return ioutil.WriteFile(v.settingsPath, bytes, v.fileMode)
 }
