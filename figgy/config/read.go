@@ -10,6 +10,7 @@ import (
 )
 
 const FiggyConfigName = ".fig.yaml"
+const FiggyYamlKey = ".figgy_file"
 
 func GetAllFiggiedConfigs(path string) (*[]string, error) {
 	yfile, err := os.Open(path)
@@ -32,22 +33,51 @@ func GetAllFiggiedConfigs(path string) (*[]string, error) {
 			return nil, err
 		}
 		//use node.HeadComment once fixed upstream
-		if figgiedConfig, exists := data[".figgy_file"]; exists {
+		if figgiedConfig, exists := data[FiggyYamlKey]; exists {
 			figgiedConfigs = append(figgiedConfigs, figgiedConfig.(string))
 		}
 	}
 }
 
 func ReadFiggyConfig(path string) (ParsedConfig, error) {
-	return nil, nil
+	yfile, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	decoder := yaml.NewDecoder(yfile)
+	figgyConfig := make(map[string]interface{})
+	var node yaml.Node
+	for {
+		if err := decoder.Decode(&node); err != nil {
+			if err.Error() != "EOF" {
+				return nil, err
+			}
+			return figgyConfig, nil
+		}
+		data := make(map[string]interface{})
+		err := node.Decode(&data)
+		if err != nil {
+			return nil, err
+		}
+		//use node.HeadComment once fixed upstream
+		if figgiedConfig, exists := data[".figgy_file"]; exists {
+			figgyConfig[figgiedConfig.(string)] = data
+		}
+	}
 }
 
 func ReadConfig(filename string) (ParsedConfig, error) {
 	extension := filepath.Ext(filename)
+	var fig ParsedConfig
+	var err error
 	switch extension {
 	case ".cfg":
-		return cfg.Load(filename)
+		fig, err = cfg.Load(filename)
 	default:
-		return nil, fmt.Errorf("unsupported file extension: %s", extension)
+		fig, err = nil, fmt.Errorf("unsupported file extension: %s", extension)
 	}
+	if fig != nil {
+		fig[FiggyYamlKey] = filename
+	}
+	return fig, err
 }
