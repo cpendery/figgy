@@ -5,7 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cpendery/figgy/figgy/config/cfg"
+	"github.com/cpendery/figgy/figgy/engines"
+	_ "github.com/cpendery/figgy/figgy/engines/all"
 	yaml "gopkg.in/yaml.v3"
 )
 
@@ -70,10 +71,11 @@ func ReadConfig(filename string) (ParsedConfig, error) {
 	extension := filepath.Ext(filename)
 	var fig ParsedConfig
 	var err error
-	switch extension {
-	case ".cfg":
-		fig, err = cfg.Load(filename)
-	default:
+
+	engine, exists := engines.Get(extension)
+	if exists {
+		fig, err = engine.Load(filename)
+	} else {
 		fig, err = nil, fmt.Errorf("unsupported file extension: %s", extension)
 	}
 	if fig != nil {

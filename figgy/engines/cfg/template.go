@@ -1,8 +1,19 @@
 package cfg
 
 import (
+	"github.com/cpendery/figgy/figgy/engines"
+	"github.com/cpendery/figgy/figgy/models"
+
 	configparser "github.com/bigkevmcd/go-configparser"
 )
+
+func init() {
+	engines.Register(models.ConfigEngine{
+		Extension: ".cfg",
+		Load:      Load,
+		Write:     Write,
+	})
+}
 
 func Load(filename string) (map[string]interface{}, error) {
 	result := make(map[string]interface{})

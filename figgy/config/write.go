@@ -5,7 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cpendery/figgy/figgy/config/cfg"
+	"github.com/cpendery/figgy/figgy/engines"
+	_ "github.com/cpendery/figgy/figgy/engines/all"
 	"gopkg.in/yaml.v3"
 )
 
@@ -35,10 +36,9 @@ func WriteConfig(fig ParsedConfig) error {
 
 	delete(fig, FiggyYamlKey)
 
-	switch extension {
-	case ".cfg":
-		return cfg.Write(path, fig)
-	default:
-		return fmt.Errorf("unsupported file extension: %s", extension)
+	engine, exists := engines.Get(extension)
+	if exists {
+		return engine.Write(path, fig)
 	}
+	return fmt.Errorf("unsupported file extension: %s", extension)
 }

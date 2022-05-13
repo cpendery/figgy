@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"sync"
+
 	"github.com/cpendery/figgy/figgy/config"
 	"github.com/spf13/cobra"
 )
@@ -21,11 +23,25 @@ func writeFiggiedFiles(_ *cobra.Command, _ []string) error {
 	if err != nil {
 		return err
 	}
+	var wg sync.WaitGroup
+	errs := make(chan error, len(figgyConfig))
 	for _, fig := range figgyConfig {
-		err := config.WriteConfig(fig.(map[string]interface{}))
-		if err != nil {
-			return err
-		}
+		wg.Add(1)
+		go func(f interface{}) {
+			defer wg.Done()
+			err := config.WriteConfig(f.(map[string]interface{}))
+			if err != nil {
+				errs <- err
+			}
+		}(fig)
 	}
+
+	wg.Wait()
+	close(errs)
+
+	for err := range errs {
+		return err
+	}
+
 	return nil
 }
