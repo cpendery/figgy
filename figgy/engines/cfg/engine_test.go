@@ -1,12 +1,15 @@
 package cfg
 
 import (
+	"os"
 	"testing"
 
 	"github.com/bigkevmcd/go-configparser"
 	"github.com/bradleyjkemp/cupaloy"
 	"github.com/stretchr/testify/require"
 )
+
+const testSinkDirPath = "../../../testdataSink"
 
 func TestLoad(t *testing.T) {
 	//GIVEN
@@ -33,7 +36,8 @@ func TestLoad_Fails(t *testing.T) {
 
 func TestWrite(t *testing.T) {
 	//GIVEN
-	path := "../../../testdataSink/cfg_test_write.cfg"
+	path := testSinkDirPath + "/cfg_test_write.cfg"
+	os.MkdirAll(testSinkDirPath, 0444) //nolint:errcheck
 	config := make(map[string]interface{})
 	section := make(map[string]interface{})
 	section["key"] = "value"
@@ -56,7 +60,8 @@ func TestWrite(t *testing.T) {
 
 func TestWrite_Fails(t *testing.T) {
 	//GIVEN
-	path := "../../../testdataSink/cfg_test_write.cfg"
+	path := testSinkDirPath + "/cfg_test_write_fails.cfg"
+	os.MkdirAll(testSinkDirPath, 0444) //nolint:errcheck
 	config := make(map[string]interface{})
 	section := make(map[string]interface{})
 	section["key"] = ""
