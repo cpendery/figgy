@@ -11,7 +11,7 @@ import (
 )
 
 func WriteFiggyConfig(fig ParsedConfig) error {
-	f, err := os.OpenFile(FiggyConfigName, os.O_CREATE, 444)
+	f, err := os.OpenFile(FiggyConfigName, os.O_CREATE, 0444)
 	if err != nil {
 		return err
 	}

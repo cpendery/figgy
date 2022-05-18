@@ -38,7 +38,7 @@ func NewVSCodeHider() Hider {
 		settingsFile:       "/settings.json",
 		settingsPath:       "./.vscode/settings.json",
 		excludeFileSetting: "files.exclude",
-		fileMode:           444,
+		fileMode:           0444,
 
 		configName:   config.FiggyConfigName,
 		funcWalk:     filepath.Walk,
