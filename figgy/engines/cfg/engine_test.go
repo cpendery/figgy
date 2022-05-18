@@ -23,13 +23,12 @@ func TestLoad(t *testing.T) {
 func TestLoad_Fails(t *testing.T) {
 	//GIVEN
 	path := "invalid/"
-	expected := "open invalid/: The system cannot find the file specified."
 
 	//WHEN
 	_, err := Load(path)
 
 	//THEN
-	require.Equal(t, expected, err.Error())
+	require.NotNil(t, err)
 }
 
 func TestWrite(t *testing.T) {
