@@ -18,7 +18,7 @@ func fixtureGetHider() VSCodeHider {
 		settingsFile:       "/settings.json",
 		settingsPath:       "../../testdata/settings.json",
 		excludeFileSetting: "files.exclude",
-		fileMode:           444,
+		fileMode:           0444,
 		funcWalk:           filepath.Walk,
 		funcMkdir:          os.MkdirAll,
 		funcOsCreate:       os.Create,

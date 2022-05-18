@@ -1,0 +1,24 @@
+(map[string]interface {}) (len=5) {
+  (string) (len=22) "All Values Are Strings": (configparser.Dict) (len=5) {
+    (string) (len=28) "are they treated as numbers?": (string) (len=2) "no",
+    (string) (len=48) "can use the API to get converted values directly": (string) (len=4) "true",
+    (string) (len=41) "integers, floats and booleans are held as": (string) (len=7) "strings",
+    (string) (len=7) "or this": (string) (len=13) "3.14159265359",
+    (string) (len=16) "values like this": (string) (len=7) "1000000"
+  },
+  (string) (len=16) "Multiline Values": (configparser.Dict) (len=1) {
+    (string) (len=6) "chorus": (string) (len=67) "I'm a lumberjack, and I'm okay I sleep all night and I work all day"
+  },
+  (string) (len=9) "No Values": (configparser.Dict) (len=1) {
+    (string) (len=23) "empty string value here": (string) ""
+  },
+  (string) (len=13) "Simple Values": (configparser.Dict) (len=5) {
+    (string) (len=3) "key": (string) (len=5) "value",
+    (string) (len=27) "spaces around the delimiter": (string) (len=9) "obviously",
+    (string) (len=14) "spaces in keys": (string) (len=7) "allowed",
+    (string) (len=16) "spaces in values": (string) (len=15) "allowed as well",
+    (string) (len=16) "you can also use": (string) (len=27) "to delimit keys from values"
+  },
+  (string) (len=20) "You can use comments": (configparser.Dict) {
+  }
+}
