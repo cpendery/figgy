@@ -36,9 +36,7 @@ func Write(path string, fig map[string]interface{}) error {
 			return err
 		}
 		for option, value := range sectionData.(map[string]interface{}) {
-			if err := p.Set(sectionHeader, option, value.(string)); err != nil {
-				return err
-			}
+			p.Set(sectionHeader, option, value.(string)) //nolint: errcheck
 		}
 	}
 	return p.SaveWithDelimiter(path, "=")

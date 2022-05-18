@@ -56,5 +56,16 @@ func TestWrite(t *testing.T) {
 }
 
 func TestWrite_Fails(t *testing.T) {
+	//GIVEN
+	path := "../../../testdataSink/cfg_test_write.cfg"
+	config := make(map[string]interface{})
+	section := make(map[string]interface{})
+	section["key"] = ""
+	config["DEFAULT"] = section
 
+	//WHEN
+	err := Write(path, config)
+
+	//THEN
+	require.NotNil(t, err)
 }
