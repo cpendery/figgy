@@ -23,10 +23,7 @@ func Load(filename string) (map[string]interface{}, error) {
 	}
 
 	for _, section := range p.Sections() {
-		res, err := p.Items(section)
-		if err != nil {
-			return nil, err
-		}
+		res, _ := p.Items(section)
 		result[section] = res
 	}
 	return result, nil

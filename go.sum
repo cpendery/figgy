@@ -1,5 +1,7 @@
 github.com/bigkevmcd/go-configparser v0.0.0-20210106142102-909504547ead h1:UhYWAphNveMty305skySR5ST/hbYDexgsgkhcy0MDhM=
 github.com/bigkevmcd/go-configparser v0.0.0-20210106142102-909504547ead/go.mod h1:RI5D4DqbDX0Kb0SvKTuAKMYlkSBND3zLQZI/wiS5Ij0=
+github.com/bradleyjkemp/cupaloy v2.3.0+incompatible h1:UafIjBvWQmS9i/xRg+CamMrnLTKNzo+bdmT/oH34c2Y=
+github.com/bradleyjkemp/cupaloy v2.3.0+incompatible/go.mod h1:Au1Xw1sgaJ5iSFktEhYsS0dbQiS1B0/XMXl+42y9Ilk=
 github.com/cpuguy83/go-md2man/v2 v2.0.1/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
