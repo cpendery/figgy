@@ -6,4 +6,4 @@ snap:
 	UPDATE_SNAPSHOTS=true go test ./...
 
 build:
-	go build -o fig ./cmd
+	go build -o fig .
